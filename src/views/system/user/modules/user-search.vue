@@ -110,35 +110,16 @@
     await searchBarRef.value.validate()
     emit('search', formData.value)
     const data = {
-      reportName: '测试报表',
-      industryId: 0,
-      userDatas: [
-        {
-          modelId: '1991354240081227776',
-          data: {
-            A: [8.1, 2.0, 4.0, 80.0],
-            B: [4.4, 5.0, 6.0, 78.0],
-            D: 7,
-            E: 8,
-            F: 9,
-            H: 10
-          }
-        },
-        {
-          modelId: '1991354240081227776',
-          data: {
-            A: [8.1, 2.0, 4.0],
-            B: [4.4, 5.0, 6.0],
-            D: 7,
-            E: 8,
-            F: 9,
-            H: 10
-          }
-        }
-      ]
+      graphId: 1,
+      fromNodeId: 111,
+      fromName: '节点A',
+      toNodeId: 222,
+      toName: '节点B',
+      energyTypeId: 1,
+      energyTypeName: '电'
     }
     await request.post<void>({
-      url: 'http://back.home.local/bff/api/tenant/carbon-emission/report/save',
+      url: 'http://back.home.local/bff/api/tenant/energy/flow/create',
       data: data
     })
   }
