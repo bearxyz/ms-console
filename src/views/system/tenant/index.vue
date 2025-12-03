@@ -21,7 +21,7 @@
       >
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
+            <ElButton @click="showDialog('add')" v-ripple>新增租户</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -58,25 +58,22 @@
 <script setup lang="ts">
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import { useTable } from '@/hooks/core/useTable'
-  import { fetchGetRoleList } from '@/api/system-manage'
+  import { fetchGetOrgList, fetchGetRoleList } from '@/api/system-manage'
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
   import RoleSearch from './modules/role-search.vue'
   import RoleEditDialog from './modules/role-edit-dialog.vue'
   import RolePermissionDialog from './modules/role-permission-dialog.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
   import request from '@utils/http'
-  import { router } from '@/router'
 
   defineOptions({ name: 'Role' })
 
-  type RoleListItem = Api.SystemManage.RoleListItem
+  type OrgListItem = Api.SystemManage.OrgListItem
 
   // 搜索表单
   const searchForm = ref({
     name: undefined,
     code: undefined,
-    memo: undefined,
-    enabled: undefined,
     daterange: undefined
   })
 
@@ -84,7 +81,7 @@
 
   const dialogVisible = ref(false)
   const permissionDialog = ref(false)
-  const currentRoleData = ref<RoleListItem | undefined>(undefined)
+  const currentRoleData = ref<OrgListItem | undefined>(undefined)
 
   const {
     columns,
@@ -101,7 +98,7 @@
   } = useTable({
     // 核心配置
     core: {
-      apiFn: fetchGetRoleList,
+      apiFn: fetchGetOrgList,
       apiParams: {
         current: 1,
         size: 20
@@ -111,34 +108,13 @@
       columnsFactory: () => [
         {
           prop: 'name',
-          label: '角色名称',
+          label: '租户名称',
           minWidth: 120
         },
         {
           prop: 'code',
-          label: '角色编码',
+          label: '租户编码',
           minWidth: 120
-        },
-        {
-          prop: 'memo',
-          label: '角色描述',
-          minWidth: 150,
-          showOverflowTooltip: true
-        },
-        {
-          prop: 'enabled',
-          label: '角色状态',
-          width: 100,
-          formatter: (row) => {
-            const statusConfig = row.enabled
-              ? { type: 'success', text: '启用' }
-              : { type: 'warning', text: '禁用' }
-            return h(
-              ElTag,
-              { type: statusConfig.type as 'success' | 'warning' },
-              () => statusConfig.text
-            )
-          }
         },
         {
           prop: 'dateCreated',
@@ -155,18 +131,13 @@
               h(ArtButtonMore, {
                 list: [
                   {
-                    key: 'permission',
-                    label: '菜单权限',
-                    icon: 'ri:user-3-line'
-                  },
-                  {
                     key: 'edit',
-                    label: '编辑角色',
+                    label: '编辑租户',
                     icon: 'ri:edit-2-line'
                   },
                   {
                     key: 'delete',
-                    label: '删除角色',
+                    label: '删除租户',
                     icon: 'ri:delete-bin-4-line',
                     color: '#f56c6c'
                   }
@@ -181,7 +152,7 @@
 
   const dialogType = ref<'add' | 'edit'>('add')
 
-  const showDialog = (type: 'add' | 'edit', row?: RoleListItem) => {
+  const showDialog = (type: 'add' | 'edit', row?: OrgListItem) => {
     dialogVisible.value = true
     dialogType.value = type
     currentRoleData.value = row
@@ -201,7 +172,7 @@
     getData()
   }
 
-  const buttonMoreClick = (item: ButtonMoreItem, row: RoleListItem) => {
+  const buttonMoreClick = (item: ButtonMoreItem, row: OrgListItem) => {
     switch (item.key) {
       case 'permission':
         showPermissionDialog(row)
@@ -215,12 +186,12 @@
     }
   }
 
-  const showPermissionDialog = (row?: RoleListItem) => {
+  const showPermissionDialog = (row?: OrgListItem) => {
     permissionDialog.value = true
     currentRoleData.value = row
   }
 
-  const deleteRole = async (row: RoleListItem): Promise<void> => {
+  const deleteRole = async (row: OrgListItem): Promise<void> => {
     try {
       await ElMessageBox.confirm(`确定删除角色"${row.name}"吗？此操作不可恢复！`, '删除确认', {
         confirmButtonText: '确定',
@@ -228,7 +199,7 @@
         type: 'warning'
       })
       const d = { id: 0, idListString: row.id.toString() }
-      await request.post<void>({ url: '/api/authority/role/delete', data: d })
+      await request.post<void>({ url: '/api/authority/org/delete', data: d })
       ElMessage.success('删除成功')
       await refreshData()
     } catch (error) {

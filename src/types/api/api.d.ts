@@ -126,6 +126,15 @@ declare namespace Api {
       version: number
     }
 
+    /** 租户列表项 */
+    interface OrgListItem {
+      id: number
+      name: string
+      code: string
+      createTime: string
+      version: number
+    }
+
     /** 角色搜索参数 */
     type RoleSearchParams = Partial<
       Pick<RoleListItem, 'roleId' | 'roleName' | 'roleCode' | 'description' | 'enabled'> &

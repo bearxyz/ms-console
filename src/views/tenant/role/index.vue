@@ -58,14 +58,13 @@
 <script setup lang="ts">
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import { useTable } from '@/hooks/core/useTable'
-  import { fetchGetRoleList } from '@/api/system-manage'
+  import { fetchTenantGetRoleList } from '@/api/system-manage'
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
   import RoleSearch from './modules/role-search.vue'
   import RoleEditDialog from './modules/role-edit-dialog.vue'
   import RolePermissionDialog from './modules/role-permission-dialog.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
   import request from '@utils/http'
-  import { router } from '@/router'
 
   defineOptions({ name: 'Role' })
 
@@ -101,7 +100,7 @@
   } = useTable({
     // 核心配置
     core: {
-      apiFn: fetchGetRoleList,
+      apiFn: fetchTenantGetRoleList,
       apiParams: {
         current: 1,
         size: 20
@@ -228,7 +227,7 @@
         type: 'warning'
       })
       const d = { id: 0, idListString: row.id.toString() }
-      await request.post<void>({ url: '/api/authority/role/delete', data: d })
+      await request.post<void>({ url: '/api/tenant/role/delete', data: d })
       ElMessage.success('删除成功')
       await refreshData()
     } catch (error) {

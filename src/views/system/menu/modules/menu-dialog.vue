@@ -127,6 +127,7 @@
     icon: '',
     enabled: true,
     sort: 1,
+    scope: '',
     seq: 1,
     isMenu: true,
     apiPath: '',
@@ -189,6 +190,11 @@
           key: 'apiPath',
           type: 'input',
           props: { placeholder: '如：/system/user 或留空' }
+        },
+        {
+          label: '权限范围',
+          key: 'scope',
+          type: 'input'
         },
         { label: '图标', key: 'icon', type: 'input', props: { placeholder: '如：ri:user-line' } },
         {
@@ -296,6 +302,7 @@
       form.name = formatMenuTitle(row.meta?.title || '')
       form.path = row.path || ''
       form.code = row.code || ''
+      form.scope = row.scope || ''
       form.component = row.component || ''
       form.icon = row.meta?.icon || ''
       form.seq = row.meta?.seq || 1
@@ -318,6 +325,7 @@
       const row = props.editData
       form.id = row.id || 0
       form.name = row.title || ''
+      form.scope = row.scope || ''
       form.code = row.authMark || ''
       form.seq = row.seq || 1
       form.enabled = row.enabled
